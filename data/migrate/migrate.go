@@ -64,9 +64,6 @@ func Apply(ctx context.Context, pool *pgxpool.Pool, migrations []Migration) erro
 	if pool == nil {
 		return errors.New("PostgreSQL pool is required")
 	}
-	if _, err := pool.Exec(ctx, `CREATE TABLE IF NOT EXISTS swf_schema_migrations (version bigint PRIMARY KEY, name text NOT NULL, checksum text NOT NULL, applied_at timestamptz NOT NULL DEFAULT now())`); err != nil {
-		return fmt.Errorf("create migration table: %w", err)
-	}
 	tx, err := pool.Begin(ctx)
 	if err != nil {
 		return fmt.Errorf("begin migrations: %w", err)
@@ -74,6 +71,9 @@ func Apply(ctx context.Context, pool *pgxpool.Pool, migrations []Migration) erro
 	defer func() { _ = tx.Rollback(ctx) }()
 	if _, err := tx.Exec(ctx, `SELECT pg_advisory_xact_lock(834623001)`); err != nil {
 		return fmt.Errorf("lock migrations: %w", err)
+	}
+	if _, err := tx.Exec(ctx, `CREATE TABLE IF NOT EXISTS swf_schema_migrations (version bigint PRIMARY KEY, name text NOT NULL, checksum text NOT NULL, applied_at timestamptz NOT NULL DEFAULT now())`); err != nil {
+		return fmt.Errorf("create migration table: %w", err)
 	}
 	rows, err := tx.Query(ctx, `SELECT version, checksum FROM swf_schema_migrations`)
 	if err != nil {
