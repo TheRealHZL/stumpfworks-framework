@@ -1,0 +1,20 @@
+{
+  "HTTP": {
+    "Address": "127.0.0.1:8080",
+    "ReadTimeout": "5s",
+    "ReadHeaderTimeout": "5s",
+    "WriteTimeout": "10s",
+    "IdleTimeout": "60s",
+    "MaxHeaderBytes": 1048576,
+    "MaxConcurrentRequests": 128,
+    "QueueTimeout": "100ms"
+  },
+  "Postgres": {
+    "MaxConnections": 10,
+    "MinConnections": 1,
+    "ConnectTimeout": "5s",
+    "MaxMessageBytes": 16777216,
+    "AllowInsecure": false
+  },
+  "ShutdownTimeout": "10s"
+}
