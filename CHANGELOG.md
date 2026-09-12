@@ -23,3 +23,8 @@ follows Semantic Versioning; APIs may change during `0.x` development.
 - Raised the minimum toolchain from the initial Go 1.24 assumption to Go 1.26
   after vulnerability scanning found reachable standard-library issues.
 - Updated pgx to 5.11.0 and `golang.org/x/text` to a fixed release line.
+
+### Fixed
+
+- Serialized creation of the migration tracking table under the advisory lock,
+  preventing concurrent first-start PostgreSQL catalog races.
