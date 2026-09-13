@@ -9,13 +9,13 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/stumpfworks/framework/core/app"
-	"github.com/stumpfworks/framework/core/config"
-	"github.com/stumpfworks/framework/core/logging"
-	"github.com/stumpfworks/framework/core/version"
-	"github.com/stumpfworks/framework/data/postgres"
-	"github.com/stumpfworks/framework/web/health"
-	"github.com/stumpfworks/framework/web/middleware"
+	"github.com/TheRealHZL/stumpfworks-framework/core/app"
+	"github.com/TheRealHZL/stumpfworks-framework/core/config"
+	"github.com/TheRealHZL/stumpfworks-framework/core/logging"
+	"github.com/TheRealHZL/stumpfworks-framework/core/version"
+	"github.com/TheRealHZL/stumpfworks-framework/data/postgres"
+	"github.com/TheRealHZL/stumpfworks-framework/web/health"
+	"github.com/TheRealHZL/stumpfworks-framework/web/middleware"
 )
 
 func main() {

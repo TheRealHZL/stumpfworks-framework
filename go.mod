@@ -1,4 +1,4 @@
-module github.com/stumpfworks/framework
+module github.com/TheRealHZL/stumpfworks-framework
 
 go 1.26.0
 

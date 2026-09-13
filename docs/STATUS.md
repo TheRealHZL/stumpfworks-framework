@@ -30,6 +30,7 @@ verified in CI rather than on the Windows workstation.
 
 ## Before tagging alpha.1
 
-- Confirm the module path and Apache-2.0 license choice with the maintainer.
+- Confirm the Apache-2.0 license choice with the maintainer. The module path
+  now matches the private GitHub repository (ADR 0009).
 - Add a permanent private vulnerability-reporting address.
 - Perform the documented quick start in a clean checkout.

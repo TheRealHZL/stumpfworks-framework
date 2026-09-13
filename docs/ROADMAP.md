@@ -26,5 +26,5 @@ real consumers validate the design.
 - [x] Standard coded errors and RFC 9457 mapping
 - [x] Opt-in Prometheus-compatible HTTP metrics
 - [x] Initial Core and HTTP threat model
-- [ ] Auth threat model when the Auth design begins
+- [x] Initial Auth/OIDC client threat model and 0.3 contract boundary
 - [ ] First Identity consumer integration
