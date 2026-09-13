@@ -46,17 +46,34 @@ func NewBrowserBinding() (string, error) { return randomURLString() }
 // The application must set it before redirecting to the issuer and clear it
 // after the callback. Name must use the browser-enforced __Host- prefix.
 func BindingCookie(name, browserBinding string) (*http.Cookie, error) {
-	if !strings.HasPrefix(name, "__Host-") {
-		return nil, errors.New("OIDC binding cookie requires __Host- prefix")
-	}
 	if _, valid := decodeBinding(browserBinding); !valid {
 		return nil, ErrLoginFailed
 	}
 	cookie := &http.Cookie{Name: name, Value: browserBinding, Path: "/", MaxAge: int(transactionLifetime.Seconds()), Secure: true, HttpOnly: true, SameSite: http.SameSiteLaxMode}
-	if err := cookie.Valid(); err != nil {
-		return nil, errors.New("invalid OIDC binding cookie name")
+	if err := validateBindingCookie(cookie); err != nil {
+		return nil, err
 	}
 	return cookie, nil
+}
+
+// ClearBindingCookie removes the browser binding after a callback, including
+// failed callbacks. It uses the same host-only cookie scope as BindingCookie.
+func ClearBindingCookie(name string) (*http.Cookie, error) {
+	cookie := &http.Cookie{Name: name, Path: "/", MaxAge: -1, Secure: true, HttpOnly: true, SameSite: http.SameSiteLaxMode}
+	if err := validateBindingCookie(cookie); err != nil {
+		return nil, err
+	}
+	return cookie, nil
+}
+
+func validateBindingCookie(cookie *http.Cookie) error {
+	if !strings.HasPrefix(cookie.Name, "__Host-") {
+		return errors.New("OIDC binding cookie requires __Host- prefix")
+	}
+	if err := cookie.Valid(); err != nil {
+		return errors.New("invalid OIDC binding cookie name")
+	}
+	return nil
 }
 
 func decodeBinding(binding string) ([]byte, bool) {
