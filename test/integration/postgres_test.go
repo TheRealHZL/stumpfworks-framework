@@ -11,10 +11,10 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/stumpfworks/framework/audit"
-	auditpostgres "github.com/stumpfworks/framework/audit/postgres"
-	"github.com/stumpfworks/framework/data/migrate"
-	frameworkpostgres "github.com/stumpfworks/framework/data/postgres"
+	"github.com/TheRealHZL/stumpfworks-framework/audit"
+	auditpostgres "github.com/TheRealHZL/stumpfworks-framework/audit/postgres"
+	"github.com/TheRealHZL/stumpfworks-framework/data/migrate"
+	frameworkpostgres "github.com/TheRealHZL/stumpfworks-framework/data/postgres"
 )
 
 func TestPostgresMigrationsAndAudit(t *testing.T) {

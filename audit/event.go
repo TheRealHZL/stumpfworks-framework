@@ -7,7 +7,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/stumpfworks/framework/security"
+	"github.com/TheRealHZL/stumpfworks-framework/security"
 )
 
 // Result describes the outcome of an audited action.

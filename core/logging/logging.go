@@ -5,7 +5,7 @@ import (
 	"io"
 	"log/slog"
 
-	"github.com/stumpfworks/framework/security"
+	"github.com/TheRealHZL/stumpfworks-framework/security"
 )
 
 const redacted = "[REDACTED]"
