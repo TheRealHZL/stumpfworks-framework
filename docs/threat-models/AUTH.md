@@ -1,6 +1,7 @@
 # Auth and OIDC Client Threat Model
 
-- Status: Design baseline; no Auth implementation is claimed
+- Status: Design baseline; offline ID-token verifier implemented, other Auth
+  controls still planned
 - Date: 2026-09-13
 - Scope: future SWF OIDC client, ID-token verification, callback/session handoff,
   and the boundary between Identity and an application such as Access
