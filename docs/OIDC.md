@@ -65,6 +65,7 @@ and `transaction.Complete(...)`. The sealed bytes must never enter a cookie, URL
 log. Retain an old codec key for at least the five-minute transaction lifetime
 during rotation, or explicitly invalidate pending logins. The codec protects
 confidentiality and integrity, but the database must enforce one-use retrieval.
+This boundary is recorded in [ADR 0010](adr/0010-oidc-transaction-persistence.md).
 With `TransactionStore`, a failed binding does not consume the transaction,
 while a successful `Take` does. `Complete` consumes the returned
 transaction even on failure and validates the state before exchanging the code.
