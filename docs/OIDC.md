@@ -25,7 +25,7 @@ if err != nil { /* reject callback */ }
 http.SetCookie(w, clearingCookie) // Do this on every callback path, including errors.
 transaction, err = store.Take(callbackQuery.Get("state"), bindingFromCookie)
 if err != nil { /* reject callback */ }
-identity, err := client.Complete(ctx, transaction, callbackQuery)
+identity, err := transaction.Complete(ctx, callbackQuery)
 if err != nil { /* reject login without exposing token contents */ }
 // Look up identity.Issuer + identity.Subject in the application's explicit
 // account-link table, then create a new application-owned session.
@@ -42,7 +42,10 @@ no automatic background refresh, and the application must monitor failures.
 Even a previously constructed `LoginClient` refuses to start a new transaction
 after its configuration expires. Direct `Discover` snapshots expire after one
 hour; applications that need a shorter limit should use the cache. Transactions
-already started may complete within their separate five-minute lifetime.
+already started may complete within their separate five-minute lifetime. After
+each successful refresh, construct and publish a new `LoginClient` for new
+logins. Process-local pending transactions retain their original client
+snapshot and should call `transaction.Complete` at callback.
 Unknown keys fail closed until a trusted refresh completes. Tokens cannot
 redirect key fetching via `jku`, `x5u`, or embedded keys. Only RS256 public
 signing keys with unique `kid`,
@@ -58,7 +61,7 @@ needs shared atomic storage instead. For PostgreSQL-backed consumers,
 persistent random 32-byte key shared across replicas. Store the sealed bytes
 with hashes of state and browser binding. On callback, atomically delete the
 matching unexpired row using both hashes, then call `codec.Open(client, sealed)`
-and `client.Complete(...)`. The sealed bytes must never enter a cookie, URL, or
+and `transaction.Complete(...)`. The sealed bytes must never enter a cookie, URL, or
 log. Retain an old codec key for at least the five-minute transaction lifetime
 during rotation, or explicitly invalidate pending logins. The codec protects
 confidentiality and integrity, but the database must enforce one-use retrieval.

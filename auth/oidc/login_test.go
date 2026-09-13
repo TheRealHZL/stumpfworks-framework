@@ -88,14 +88,25 @@ func TestConfidentialCodeFlow(t *testing.T) {
 		t.Fatal(err)
 	}
 	callback := url.Values{"state": {transaction.State()}, "code": {"one-use-code"}}
-	identity, err := client.Complete(t.Context(), transaction, callback)
+	refreshedClient, err := NewLoginClient(configuration, testClient, "test-client-secret", "https://access.example.test/callback", server.Client())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := refreshedClient.Complete(t.Context(), transaction, callback); !errors.Is(err, ErrLoginFailed) || tokenCalls.Load() != 0 {
+		t.Fatal("different client snapshot consumed transaction")
+	}
+	client.configuration.validUntil = time.Now().Add(-time.Second)
+	if _, _, err := client.Begin(); !errors.Is(err, ErrStaleConfiguration) {
+		t.Fatal("stale snapshot began a new login")
+	}
+	identity, err := transaction.Complete(t.Context(), callback)
 	if err != nil || identity != (Identity{Issuer: server.URL, Subject: "opaque-subject"}) {
 		t.Fatalf("unexpected identity: %+v, %v", identity, err)
 	}
 	if tokenCalls.Load() != 1 {
 		t.Fatalf("token calls: %d", tokenCalls.Load())
 	}
-	if _, err := client.Complete(t.Context(), transaction, callback); !errors.Is(err, ErrLoginFailed) || tokenCalls.Load() != 1 {
+	if _, err := transaction.Complete(t.Context(), callback); !errors.Is(err, ErrLoginFailed) || tokenCalls.Load() != 1 {
 		t.Fatal("transaction replay succeeded")
 	}
 }
@@ -152,5 +163,11 @@ func TestLoginClientRejectsEmptyQueryMarkerOnRedirect(t *testing.T) {
 	client := testLoginClient(t)
 	if _, err := NewLoginClient(client.configuration, testClient, "secret", "https://access.example.test/callback?", nil); err == nil {
 		t.Fatal("accepted redirect URI with an empty query marker")
+	}
+}
+
+func TestNilTransactionCannotComplete(t *testing.T) {
+	if _, err := (*Transaction)(nil).Complete(t.Context(), url.Values{}); !errors.Is(err, ErrLoginFailed) {
+		t.Fatal("nil transaction accepted")
 	}
 }
