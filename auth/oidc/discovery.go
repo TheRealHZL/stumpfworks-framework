@@ -76,7 +76,7 @@ func Discover(ctx context.Context, issuer, clientID string, client *http.Client)
 func sameOriginEndpoint(issuer, endpoint string) bool {
 	base, _ := url.Parse(issuer)
 	u, err := url.Parse(endpoint)
-	return err == nil && u.Scheme == "https" && u.Host == base.Host && u.User == nil && u.Path != "" && u.RawQuery == "" && u.Fragment == ""
+	return err == nil && u.Scheme == "https" && u.Host == base.Host && u.User == nil && u.Path != "" && u.RawQuery == "" && !u.ForceQuery && u.Fragment == "" && u.Opaque == ""
 }
 
 func fetchJSON(ctx context.Context, client *http.Client, address string, limit int64, destination any) error {

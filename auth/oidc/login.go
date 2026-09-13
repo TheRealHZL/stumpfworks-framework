@@ -46,7 +46,7 @@ func NewLoginClient(configuration *Configuration, clientID, clientSecret, redire
 		return nil, errors.New("invalid OIDC client configuration")
 	}
 	redirect, err := url.Parse(redirectURI)
-	if err != nil || redirect.Scheme != "https" || redirect.Host == "" || redirect.User != nil || redirect.Path == "" || redirect.RawQuery != "" || redirect.Fragment != "" {
+	if err != nil || redirect.Scheme != "https" || redirect.Host == "" || redirect.User != nil || redirect.Path == "" || redirect.RawQuery != "" || redirect.ForceQuery || redirect.Fragment != "" || redirect.Opaque != "" {
 		return nil, errors.New("redirect URI must be an exact HTTPS callback without query")
 	}
 	if client == nil {
