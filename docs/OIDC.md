@@ -20,6 +20,9 @@ cookie, err := oidc.BindingCookie("__Host-swf_oidc", binding)
 if err != nil { /* reject login start */ }
 http.SetCookie(w, cookie)
 // Redirect to authorizationURL. At the fixed callback, read that cookie and:
+clearingCookie, err := oidc.ClearBindingCookie("__Host-swf_oidc")
+if err != nil { /* reject callback */ }
+http.SetCookie(w, clearingCookie) // Do this on every callback path, including errors.
 transaction, err = store.Take(callbackQuery.Get("state"), bindingFromCookie)
 if err != nil { /* reject callback */ }
 identity, err := client.Complete(ctx, transaction, callbackQuery)
