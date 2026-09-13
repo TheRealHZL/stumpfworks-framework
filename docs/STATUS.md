@@ -33,6 +33,10 @@ verified in CI rather than on the Windows workstation.
 The framework now has pinned-issuer Discovery and JWKS retrieval, an offline
 RS256 ID-token verifier, confidential Authorization Code + PKCE S256 login,
 one-use browser-bound transactions, and bounded Discovery/JWKS freshness.
+Pending transactions can now be sealed for consumer-owned PostgreSQL storage;
+an integration test verifies browser binding and atomic one-use retrieval.
+`ACCESS-OIDC-INTEGRATION.md` records the next consumer steps. A provider-neutral
+AI interface is noted only as a future candidate in the roadmap.
 The latest merges passed the full GitHub CI workflow on both `main` and
 `develop`, including race tests, PostgreSQL integration, build, vet, and the
 vulnerability scan.
