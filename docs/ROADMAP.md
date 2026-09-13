@@ -35,5 +35,6 @@ real consumers validate the design.
 - [x] Pinned-issuer Discovery and JWKS fetch with bounded responses, same-origin endpoints, no redirects, and TLS verification
 - [x] One-use browser transaction, PKCE S256, confidential code exchange, and ID-token handoff
 - [x] Optional bounded browser-bound transaction store for single-process consumers
-- [ ] Consumer-owned cookie/session integration and JWKS refresh policy
+- [x] Age-bounded, atomic Discovery/JWKS refresh helper with fail-closed stale keys
+- [ ] Consumer-owned cookie/session wiring and refresh scheduling
 - [ ] Contract test against the real Identity provider and first consumer
