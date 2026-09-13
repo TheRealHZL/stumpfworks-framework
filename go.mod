@@ -3,7 +3,7 @@ module github.com/TheRealHZL/stumpfworks-framework
 go 1.26.0
 
 require (
-	github.com/go-jose/go-jose/v4 v4.1.3
+	github.com/go-jose/go-jose/v4 v4.1.5
 	github.com/jackc/pgx/v5 v5.11.0
 )
 
