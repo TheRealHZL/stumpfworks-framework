@@ -27,7 +27,7 @@ real consumers validate the design.
 - [x] Opt-in Prometheus-compatible HTTP metrics
 - [x] Initial Core and HTTP threat model
 - [x] Initial Auth/OIDC client threat model and 0.3 contract boundary
-- [ ] First Identity consumer integration
+- [ ] First Identity consumer integration (see `ACCESS-OIDC-INTEGRATION.md`)
 
 ## 0.3 — OIDC client
 
@@ -35,6 +35,7 @@ real consumers validate the design.
 - [x] Pinned-issuer Discovery and JWKS fetch with bounded responses, same-origin endpoints, no redirects, and TLS verification
 - [x] One-use browser transaction, PKCE S256, confidential code exchange, and ID-token handoff
 - [x] Optional bounded browser-bound transaction store for single-process consumers
+- [x] Encrypted transaction codec for consumer-owned, one-use PostgreSQL storage
 - [x] Age-bounded, atomic Discovery/JWKS refresh helper with fail-closed stale keys
 - [ ] Consumer-owned cookie/session wiring and refresh scheduling
 - [ ] Contract test against the real Identity provider and first consumer

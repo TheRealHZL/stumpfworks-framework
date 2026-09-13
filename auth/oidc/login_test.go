@@ -1,6 +1,7 @@
 package oidc
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
@@ -74,6 +75,18 @@ func TestConfidentialCodeFlow(t *testing.T) {
 	}
 	expectedChallenge.Store(query.Get("code_challenge"))
 	expectedNonce.Store(query.Get("nonce"))
+	codec, err := NewTransactionCodec(bytes.Repeat([]byte{9}, 32))
+	if err != nil {
+		t.Fatal(err)
+	}
+	sealed, err := codec.Seal(transaction)
+	if err != nil {
+		t.Fatal(err)
+	}
+	transaction, err = codec.Open(client, sealed)
+	if err != nil {
+		t.Fatal(err)
+	}
 	callback := url.Values{"state": {transaction.State()}, "code": {"one-use-code"}}
 	identity, err := client.Complete(t.Context(), transaction, callback)
 	if err != nil || identity != (Identity{Issuer: server.URL, Subject: "opaque-subject"}) {
