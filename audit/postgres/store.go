@@ -7,8 +7,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/TheRealHZL/stumpfworks-framework/audit"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // Store is an append-only PostgreSQL audit store.
