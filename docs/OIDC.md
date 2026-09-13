@@ -13,7 +13,15 @@ client, err := oidc.NewLoginClient(configuration, clientID, clientSecret, exactR
 if err != nil { /* reject configuration */ }
 authorizationURL, transaction, err := client.Begin()
 if err != nil { /* reject login start */ }
-// Bind transaction server-side to this browser before redirecting to authorizationURL.
+binding, err := oidc.NewBrowserBinding()
+if err != nil { /* reject login start */ }
+if err := store.Put(transaction, binding); err != nil { /* reject login start */ }
+cookie, err := oidc.BindingCookie("__Host-swf_oidc", binding)
+if err != nil { /* reject login start */ }
+http.SetCookie(w, cookie)
+// Redirect to authorizationURL. At the fixed callback, read that cookie and:
+transaction, err = store.Take(callbackQuery.Get("state"), bindingFromCookie)
+if err != nil { /* reject callback */ }
 identity, err := client.Complete(ctx, transaction, callbackQuery)
 if err != nil { /* reject login without exposing token contents */ }
 // Look up identity.Issuer + identity.Subject in the application's explicit
@@ -30,11 +38,16 @@ trusted refresh completes. Tokens cannot redirect key fetching via `jku`,
 `x5u`, or embedded keys. Only RS256 public signing keys with unique `kid`,
 `alg=RS256`, and `use=sig` are accepted.
 
-`Begin` generates unpredictable state, nonce, and PKCE verifier. The
-application must store the returned transaction server-side and bind its lookup
-to the initiating browser; using state alone as the lookup key is not browser
-binding. `Complete` consumes the transaction even on failure and validates the
-state before exchanging the code. The application owns its local session,
+`Begin` generates unpredictable state, nonce, and PKCE verifier.
+`TransactionStore` is an optional bounded, process-local helper that stores the
+transaction against a hash of an independent random browser binding. The
+binding belongs in a `Secure`, `HttpOnly`, `SameSite=Lax`, host-only cookie with
+path `/` and a five-minute lifetime; use a `__Host-` cookie name. A cluster
+needs shared atomic storage instead. A failed binding does not consume the
+transaction, while a successful `Take` does. `Complete` consumes the returned
+transaction even on failure and validates the state before exchanging the code.
+Using state alone as the lookup key is not browser binding. The application
+owns its local session,
 account link, roles, logout, and recovery login. Never pass an access token to
 the ID-token verifier. Never log tokens, codes, state, nonce, client secrets, or
 raw callback URLs. The verifier requires an ID-token lifetime of at most ten

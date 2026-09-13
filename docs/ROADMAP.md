@@ -34,5 +34,6 @@ real consumers validate the design.
 - [x] Offline, pinned-issuer RS256 ID-token verifier with bounded JWKS and claims
 - [x] Pinned-issuer Discovery and JWKS fetch with bounded responses, same-origin endpoints, no redirects, and TLS verification
 - [x] One-use browser transaction, PKCE S256, confidential code exchange, and ID-token handoff
-- [ ] Consumer-owned browser binding, local session integration, and JWKS refresh policy
+- [x] Optional bounded browser-bound transaction store for single-process consumers
+- [ ] Consumer-owned cookie/session integration and JWKS refresh policy
 - [ ] Contract test against the real Identity provider and first consumer
