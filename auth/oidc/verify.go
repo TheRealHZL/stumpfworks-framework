@@ -45,8 +45,7 @@ type Verifier struct {
 // The caller must fetch it over verified TLS from its pinned issuer and control
 // cache freshness, size and retry policy. No network operation occurs here.
 func NewVerifier(issuer, clientID string, jwks []byte) (*Verifier, error) {
-	u, err := url.Parse(issuer)
-	if err != nil || u.Scheme != "https" || u.Host == "" || u.User != nil || u.Path != "" || u.RawQuery != "" || u.Fragment != "" || strings.HasSuffix(issuer, "/") {
+	if !validIssuer(issuer) {
 		return nil, errors.New("issuer must be an exact HTTPS origin")
 	}
 	if clientID == "" || len(clientID) > 256 || strings.TrimSpace(clientID) != clientID {
@@ -71,6 +70,11 @@ func NewVerifier(issuer, clientID string, jwks []byte) (*Verifier, error) {
 		keys[key.KeyID] = public
 	}
 	return &Verifier{issuer: issuer, clientID: clientID, keys: keys, now: time.Now}, nil
+}
+
+func validIssuer(issuer string) bool {
+	u, err := url.Parse(issuer)
+	return err == nil && u.Scheme == "https" && u.Host != "" && u.User == nil && u.Path == "" && u.RawQuery == "" && u.Fragment == "" && u.String() == issuer
 }
 
 type idClaims struct {
