@@ -37,3 +37,13 @@ minimal app also limits simultaneous requests and applies a bounded queue wait.
 CORS is disabled unless an application explicitly installs `middleware.CORS`.
 The middleware validates exact HTTP(S) origins, methods, and headers. Credentialed
 requests cannot use a wildcard origin. CORS does not replace CSRF protection.
+
+## Metrics
+
+`web/metrics.New` provides a Prometheus-compatible request counter and duration
+histogram. Install `registry.Middleware` outermost to observe the final status
+after panic recovery and overload handling. Register `registry.Handler()` only
+on a separate, protected management listener; the minimal app intentionally
+does not publish `/metrics`. Labels use the registered route pattern (or
+`unmatched`), a bounded method set, and status. Raw paths, queries, IDs, and
+headers are never used as labels. Each application owns its own registry.
