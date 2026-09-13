@@ -53,8 +53,17 @@ signing keys with unique `kid`,
 transaction against a hash of an independent random browser binding. The
 binding belongs in a `Secure`, `HttpOnly`, `SameSite=Lax`, host-only cookie with
 path `/` and a five-minute lifetime; use a `__Host-` cookie name. A cluster
-needs shared atomic storage instead. A failed binding does not consume the
-transaction, while a successful `Take` does. `Complete` consumes the returned
+needs shared atomic storage instead. For PostgreSQL-backed consumers,
+`TransactionCodec` can encrypt a transaction for a server-side record. Use a
+persistent random 32-byte key shared across replicas. Store the sealed bytes
+with hashes of state and browser binding. On callback, atomically delete the
+matching unexpired row using both hashes, then call `codec.Open(client, sealed)`
+and `client.Complete(...)`. The sealed bytes must never enter a cookie, URL, or
+log. Retain an old codec key for at least the five-minute transaction lifetime
+during rotation, or explicitly invalidate pending logins. The codec protects
+confidentiality and integrity, but the database must enforce one-use retrieval.
+With `TransactionStore`, a failed binding does not consume the transaction,
+while a successful `Take` does. `Complete` consumes the returned
 transaction even on failure and validates the state before exchanging the code.
 Using state alone as the lookup key is not browser binding. The application
 owns its local session,

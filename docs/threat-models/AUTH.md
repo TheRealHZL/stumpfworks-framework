@@ -1,7 +1,7 @@
 # Auth and OIDC Client Threat Model
 
-- Status: Design baseline; offline ID-token verifier implemented, other Auth
-  controls still planned
+- Status: OIDC client primitives implemented; consumer wiring and live contract
+  test still pending
 - Date: 2026-09-13
 - Scope: future SWF OIDC client, ID-token verification, callback/session handoff,
   and the boundary between Identity and an application such as Access
@@ -34,6 +34,7 @@ code/state callback, logs, metrics, audit free text, or diagnostic packages.
 | Threat | Intended SWF/client control | Required test |
 |---|---|---|
 | Login CSRF or swapped browser transaction | unpredictable one-use state bound to the initiating browser, nonce, and PKCE S256; clear transaction after use | missing, altered, replayed, or cross-browser state and nonce fail |
+| Pending-login database disclosure or tampering | encrypt and authenticate persisted transaction contents, protect the codec key separately, store only state/browser digests, expire after five minutes, and atomically delete on callback | wrong key, changed ciphertext, wrong client, expired record, and replay fail |
 | Code interception or injection | exact registered redirect URI, PKCE S256, short-lived one-use code; reject unexpected callback parameters | wrong verifier, redirect, replay, and duplicate parameters fail |
 | Mix-up between issuers | pin one configured issuer per client configuration; verify discovery issuer exactly; if multiple issuers are later supported, add an explicit mix-up defense | metadata or response from a different issuer fails |
 | SSRF through discovery or JWKS | issuer is operator-configured, exact HTTPS origin; reject discovery-supplied non-HTTPS or foreign-host endpoints unless separately approved | attacker-supplied metadata cannot redirect fetches to local/private hosts |
