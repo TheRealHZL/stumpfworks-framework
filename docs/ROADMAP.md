@@ -28,3 +28,10 @@ real consumers validate the design.
 - [x] Initial Core and HTTP threat model
 - [x] Initial Auth/OIDC client threat model and 0.3 contract boundary
 - [ ] First Identity consumer integration
+
+## 0.3 — OIDC client
+
+- [x] Offline, pinned-issuer RS256 ID-token verifier with bounded JWKS and claims
+- [ ] Trusted Discovery and JWKS refresh with bounded cache and TLS policy
+- [ ] Browser transaction, PKCE S256, token exchange, and session handoff
+- [ ] Contract test against the real Identity provider and first consumer

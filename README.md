@@ -58,6 +58,8 @@ values; omitted values retain safe defaults. Unknown JSON fields fail startup.
 
 See [the architecture](docs/ARCHITECTURE.md), [roadmap](docs/ROADMAP.md),
 [development guide](docs/DEVELOPMENT.md), and [security policy](docs/SECURITY.md).
+The first OIDC verifier and its integration boundary are documented in
+[`docs/OIDC.md`](docs/OIDC.md).
 The current acceptance evidence and remaining release gates are tracked in
 [`docs/STATUS.md`](docs/STATUS.md).
 
