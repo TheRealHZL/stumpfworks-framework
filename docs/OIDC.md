@@ -1,36 +1,46 @@
 # OIDC ID-token verification
 
-`auth/oidc` is the first narrow part of the 0.3 client. It verifies an ID token
-from one operator-pinned HTTPS issuer using an immutable snapshot of that
-issuer's public JWKS. It returns only `(issuer, subject)`; it neither creates an
-application account nor grants roles or permissions.
+`auth/oidc` is a narrow confidential OIDC relying-party client for one
+operator-pinned HTTPS issuer. It retrieves Discovery and JWKS without redirects,
+checks the advertised issuer and same-origin endpoints, performs Authorization
+Code + PKCE S256, and verifies the ID token. It returns only `(issuer, subject)`;
+it neither creates an application account nor grants roles or permissions.
 
 ```go
-verifier, err := oidc.NewVerifier(expectedIssuer, clientID, trustedJWKS)
-if err != nil { /* reject configuration or key refresh */ }
-identity, err := verifier.VerifyIDToken(idToken, pendingLogin.Nonce)
+configuration, err := oidc.Discover(ctx, expectedIssuer, clientID, httpClient)
+if err != nil { /* reject discovery */ }
+client, err := oidc.NewLoginClient(configuration, clientID, clientSecret, exactRedirectURI, httpClient)
+if err != nil { /* reject configuration */ }
+authorizationURL, transaction, err := client.Begin()
+if err != nil { /* reject login start */ }
+// Bind transaction server-side to this browser before redirecting to authorizationURL.
+identity, err := client.Complete(ctx, transaction, callbackQuery)
 if err != nil { /* reject login without exposing token contents */ }
 // Look up identity.Issuer + identity.Subject in the application's explicit
 // account-link table, then create a new application-owned session.
 ```
 
-The application must fetch JWKS only from its configured issuer over verified
-TLS, enforce a bounded response and cache lifetime, and replace the verifier
-after a valid key refresh. It must never follow a `jku`, `x5u`, or embedded key
-from a token. Unknown keys fail closed until a trusted refresh is complete.
-This package currently accepts only RS256 public signing keys with unique
-`kid`, `alg=RS256`, and `use=sig`; it does not implement Discovery or JWKS
-fetching.
+`Discover` uses a five-second total deadline, bounds both JSON responses, and
+rejects redirects or cross-origin metadata endpoints. The default HTTP client
+verifies TLS. If a custom client is supplied for a private CA, its transport
+must retain certificate and hostname verification. The application owns cache
+age, refresh cadence, and atomic replacement of the returned configuration;
+there is no automatic background refresh. Unknown keys fail closed until a
+trusted refresh completes. Tokens cannot redirect key fetching via `jku`,
+`x5u`, or embedded keys. Only RS256 public signing keys with unique `kid`,
+`alg=RS256`, and `use=sig` are accepted.
 
-The caller owns the browser transaction: generate unpredictable one-use state,
-nonce and PKCE S256 verifier; bind them to the browser; check the callback and
-token exchange; consume the transaction once. `VerifyIDToken` checks a nonempty
-expected nonce but cannot enforce one-use state by itself. Never pass an access
-token here. Never log tokens, codes, state, nonce, client secrets, or raw callback
-URLs. The current verifier requires an ID-token lifetime of at most ten minutes
-and accepts at most one minute of future clock skew for `iat`/`nbf`.
+`Begin` generates unpredictable state, nonce, and PKCE verifier. The
+application must store the returned transaction server-side and bind its lookup
+to the initiating browser; using state alone as the lookup key is not browser
+binding. `Complete` consumes the transaction even on failure and validates the
+state before exchanging the code. The application owns its local session,
+account link, roles, logout, and recovery login. Never pass an access token to
+the ID-token verifier. Never log tokens, codes, state, nonce, client secrets, or
+raw callback URLs. The verifier requires an ID-token lifetime of at most ten
+minutes and accepts at most one minute of future clock skew for `iat`/`nbf`.
 
 Identity's current provider issues RS256 ID tokens with a five-minute lifetime
 and a nonce, so its output is compatible by design. A live consumer contract
-test is still required before production integration. Identity remains on Go
-1.24 and is not changed by this module.
+test and application-owned session integration are still required before
+production use. Identity remains on Go 1.24 and is not changed by this module.

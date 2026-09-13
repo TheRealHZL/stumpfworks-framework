@@ -32,6 +32,7 @@ real consumers validate the design.
 ## 0.3 — OIDC client
 
 - [x] Offline, pinned-issuer RS256 ID-token verifier with bounded JWKS and claims
-- [ ] Trusted Discovery and JWKS refresh with bounded cache and TLS policy
-- [ ] Browser transaction, PKCE S256, token exchange, and session handoff
+- [x] Pinned-issuer Discovery and JWKS fetch with bounded responses, same-origin endpoints, no redirects, and TLS verification
+- [x] One-use browser transaction, PKCE S256, confidential code exchange, and ID-token handoff
+- [ ] Consumer-owned browser binding, local session integration, and JWKS refresh policy
 - [ ] Contract test against the real Identity provider and first consumer
