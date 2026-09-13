@@ -14,15 +14,16 @@ Code, PKCE S256, RS256, and `client_secret_basic`, which match `auth/oidc`.
 ## Proposed replacement boundary
 
 1. At startup, configure one pinned issuer, exact callback URI, trusted Homelab
-   CA, and `ConfigurationCache`. Refresh before accepting new OIDC logins and
-   schedule monitored refreshes before the configured maximum age.
+   CA, and `ConfigurationCache`. Refresh before accepting new OIDC logins,
+   publish a new `LoginClient` after each successful refresh, and schedule
+   monitored refreshes before the configured maximum age.
 2. At login start, call `LoginClient.Begin` and `NewBrowserBinding`. Seal the
    transaction with `TransactionCodec` using a separate persistent random
    32-byte key. Store ciphertext and hashed state/browser binding in Access's
    PostgreSQL attempts table. Access keeps its own rate limiting and redirect.
 3. At callback, read and clear the host-only browser cookie. Atomically delete
    the matching unexpired row using both digests. Call `codec.Open` and then
-   `client.Complete`. Pass only the verified `(issuer, subject)` to Access's
+   `transaction.Complete`. Pass only the verified `(issuer, subject)` to Access's
    existing account-link and session transaction. Never grant roles from claims.
 4. Keep the old login implementation available for rollback until the new path
    passes tests. Do not use the process-local `TransactionStore` for Access.

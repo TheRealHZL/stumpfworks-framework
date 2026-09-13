@@ -78,6 +78,16 @@ func (transaction *Transaction) State() string {
 	return transaction.state
 }
 
+// Complete finishes this transaction with the client snapshot that began it.
+// This remains valid for an already-started login when the application has
+// published a refreshed LoginClient for new logins.
+func (transaction *Transaction) Complete(ctx context.Context, callback url.Values) (Identity, error) {
+	if transaction == nil || transaction.owner == nil {
+		return Identity{}, ErrLoginFailed
+	}
+	return transaction.owner.Complete(ctx, transaction, callback)
+}
+
 // Begin creates a fresh one-use browser transaction and its authorization URL.
 // The caller must bind the transaction to a browser session before redirecting.
 func (client *LoginClient) Begin() (string, *Transaction, error) {
