@@ -24,7 +24,7 @@ real consumers validate the design.
 - [x] Opt-in strict CORS policy
 - [x] Concurrent-request overload protection
 - [x] Standard coded errors and RFC 9457 mapping
-- [ ] Prometheus-compatible metrics
+- [x] Opt-in Prometheus-compatible HTTP metrics
 - [x] Initial Core and HTTP threat model
 - [ ] Auth threat model when the Auth design begins
 - [ ] First Identity consumer integration
