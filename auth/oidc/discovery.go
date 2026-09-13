@@ -22,6 +22,7 @@ type Configuration struct {
 	AuthorizationEndpoint string
 	TokenEndpoint         string
 	Verifier              *Verifier
+	validUntil            time.Time
 }
 
 type metadata struct {
@@ -69,7 +70,7 @@ func Discover(ctx context.Context, issuer, clientID string, client *http.Client)
 	if err != nil {
 		return nil, errors.New("OIDC JWKS is invalid")
 	}
-	return &Configuration{AuthorizationEndpoint: meta.AuthorizationEndpoint, TokenEndpoint: meta.TokenEndpoint, Verifier: verifier}, nil
+	return &Configuration{AuthorizationEndpoint: meta.AuthorizationEndpoint, TokenEndpoint: meta.TokenEndpoint, Verifier: verifier, validUntil: time.Now().Add(time.Hour)}, nil
 }
 
 func sameOriginEndpoint(issuer, endpoint string) bool {

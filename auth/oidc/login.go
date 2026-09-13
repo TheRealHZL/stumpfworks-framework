@@ -84,6 +84,9 @@ func (client *LoginClient) Begin() (string, *Transaction, error) {
 	if client == nil {
 		return "", nil, errors.New("OIDC client is required")
 	}
+	if !client.configuration.validUntil.IsZero() && !client.now().Before(client.configuration.validUntil) {
+		return "", nil, ErrStaleConfiguration
+	}
 	state, err := randomURLString()
 	if err != nil {
 		return "", nil, err

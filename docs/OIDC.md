@@ -31,11 +31,18 @@ if err != nil { /* reject login without exposing token contents */ }
 `Discover` uses a five-second total deadline, bounds both JSON responses, and
 rejects redirects or cross-origin metadata endpoints. The default HTTP client
 verifies TLS. If a custom client is supplied for a private CA, its transport
-must retain certificate and hostname verification. The application owns cache
-age, refresh cadence, and atomic replacement of the returned configuration;
-there is no automatic background refresh. Unknown keys fail closed until a
-trusted refresh completes. Tokens cannot redirect key fetching via `jku`,
-`x5u`, or embedded keys. Only RS256 public signing keys with unique `kid`,
+must retain certificate and hostname verification. `ConfigurationCache` is an
+optional helper for a one-minute to one-hour maximum key age. Call `Refresh`
+at startup and on an application-owned schedule; `Current` fails closed when
+the snapshot expires. A failed refresh does not extend its deadline. There is
+no automatic background refresh, and the application must monitor failures.
+Even a previously constructed `LoginClient` refuses to start a new transaction
+after its configuration expires. Direct `Discover` snapshots expire after one
+hour; applications that need a shorter limit should use the cache. Transactions
+already started may complete within their separate five-minute lifetime.
+Unknown keys fail closed until a trusted refresh completes. Tokens cannot
+redirect key fetching via `jku`, `x5u`, or embedded keys. Only RS256 public
+signing keys with unique `kid`,
 `alg=RS256`, and `use=sig` are accepted.
 
 `Begin` generates unpredictable state, nonce, and PKCE verifier.
