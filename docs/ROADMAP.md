@@ -38,3 +38,16 @@ real consumers validate the design.
 - [x] Age-bounded, atomic Discovery/JWKS refresh helper with fail-closed stale keys
 - [ ] Consumer-owned cookie/session wiring and refresh scheduling
 - [ ] Contract test against the real Identity provider and first consumer
+
+## Future candidate — optional AI integration
+
+When a real application needs AI, evaluate a small provider-neutral text
+generation interface in the framework. Applications should choose a provider
+and model through configuration, without depending on provider-specific APIs.
+Potential adapters are OpenAI, an OpenAI-compatible local Ollama endpoint, and
+Claude. Provider-specific features should remain explicit capabilities, not be
+forced into a lowest-common-denominator interface. Streaming, tools, images,
+embeddings, and fallback routing are out of scope until a consumer needs them.
+Any implementation must bound time, request/response size, and spending; keep
+API keys out of logs; and make external data transfer opt-in. Do not build this
+module before a concrete consumer validates the interface (Architecture 5.6).
