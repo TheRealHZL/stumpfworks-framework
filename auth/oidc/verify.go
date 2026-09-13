@@ -74,7 +74,7 @@ func NewVerifier(issuer, clientID string, jwks []byte) (*Verifier, error) {
 
 func validIssuer(issuer string) bool {
 	u, err := url.Parse(issuer)
-	return err == nil && u.Scheme == "https" && u.Host != "" && u.User == nil && u.Path == "" && u.RawQuery == "" && u.Fragment == "" && u.String() == issuer
+	return err == nil && u.Scheme == "https" && u.Host != "" && u.User == nil && u.Path == "" && u.RawQuery == "" && !u.ForceQuery && u.Fragment == "" && u.Opaque == "" && u.String() == issuer
 }
 
 type idClaims struct {

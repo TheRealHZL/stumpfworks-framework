@@ -82,6 +82,8 @@ func TestDiscoverRejectsUntrustedMetadataAndRedirects(t *testing.T) {
 			meta["jwks_uri"] = "https://evil.example.test/jwks"
 		case "http token":
 			meta["token_endpoint"] = "http://identity.example.test/token"
+		case "empty-query token":
+			meta["token_endpoint"] = server.URL + "/oauth2/token?"
 		case "missing PKCE":
 			meta["code_challenge_methods_supported"] = []string{"plain"}
 		case "wrong algorithm":
@@ -90,7 +92,7 @@ func TestDiscoverRejectsUntrustedMetadataAndRedirects(t *testing.T) {
 		_ = json.NewEncoder(w).Encode(meta)
 	}))
 	defer server.Close()
-	for _, testMode := range []string{"wrong issuer", "foreign JWKS", "http token", "missing PKCE", "wrong algorithm", "redirect", "oversized metadata", "oversized jwks"} {
+	for _, testMode := range []string{"wrong issuer", "foreign JWKS", "http token", "empty-query token", "missing PKCE", "wrong algorithm", "redirect", "oversized metadata", "oversized jwks"} {
 		t.Run(testMode, func(t *testing.T) {
 			mode.Store(testMode)
 			if _, err := Discover(t.Context(), server.URL, testClient, server.Client()); err == nil {
@@ -106,5 +108,8 @@ func TestDiscoverRejectsInvalidContextAndIssuer(t *testing.T) {
 	}
 	if _, err := Discover(context.Background(), "http://identity.example.test", testClient, nil); err == nil {
 		t.Fatal("accepted HTTP issuer")
+	}
+	if _, err := Discover(context.Background(), "https://identity.example.test?", testClient, nil); err == nil {
+		t.Fatal("accepted issuer with an empty query marker")
 	}
 }

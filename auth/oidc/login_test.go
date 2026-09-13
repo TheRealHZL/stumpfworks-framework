@@ -147,3 +147,10 @@ func TestCallbackFailsClosedBeforeTokenExchange(t *testing.T) {
 		t.Fatal("accepted expired transaction")
 	}
 }
+
+func TestLoginClientRejectsEmptyQueryMarkerOnRedirect(t *testing.T) {
+	client := testLoginClient(t)
+	if _, err := NewLoginClient(client.configuration, testClient, "secret", "https://access.example.test/callback?", nil); err == nil {
+		t.Fatal("accepted redirect URI with an empty query marker")
+	}
+}
