@@ -3,6 +3,7 @@ package oidc
 import (
 	"errors"
 	"net/http"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -50,6 +51,17 @@ func TestStoreBindsAndConsumesTransaction(t *testing.T) {
 	}
 	if _, err := BindingCookie("swf_oidc", binding); err == nil {
 		t.Fatal("accepted cookie without host-only prefix")
+	}
+	cleared, err := ClearBindingCookie(cookie.Name)
+	if err != nil || cleared.Name != cookie.Name || cleared.Value != "" || cleared.MaxAge != -1 ||
+		!cleared.Secure || !cleared.HttpOnly || cleared.SameSite != cookie.SameSite || cleared.Domain != "" || cleared.Path != cookie.Path {
+		t.Fatalf("unsafe binding cookie removal: %+v, %v", cleared, err)
+	}
+	if !strings.Contains(cleared.String(), "Max-Age=0") {
+		t.Fatalf("binding cookie removal does not expire cookie: %s", cleared.String())
+	}
+	if _, err := ClearBindingCookie("swf_oidc"); err == nil {
+		t.Fatal("accepted clearing cookie without host-only prefix")
 	}
 	if err := store.Put(transaction, binding); err != nil {
 		t.Fatal(err)
