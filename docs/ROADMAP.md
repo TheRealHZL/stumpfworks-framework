@@ -27,7 +27,7 @@ real consumers validate the design.
 - [x] Opt-in Prometheus-compatible HTTP metrics
 - [x] Initial Core and HTTP threat model
 - [x] Initial Auth/OIDC client threat model and 0.3 contract boundary
-- [ ] First Identity consumer integration (see `ACCESS-OIDC-INTEGRATION.md`)
+- [x] First Identity consumer integration in Access (see `ACCESS-OIDC-INTEGRATION.md`)
 
 ## 0.3 — OIDC client
 
@@ -37,8 +37,10 @@ real consumers validate the design.
 - [x] Optional bounded browser-bound transaction store for single-process consumers
 - [x] Encrypted transaction codec for consumer-owned, one-use PostgreSQL storage
 - [x] Age-bounded, atomic Discovery/JWKS refresh helper with fail-closed stale keys
-- [ ] Consumer-owned cookie/session wiring and refresh scheduling
-- [ ] Contract test against the real Identity provider and first consumer
+- [x] Consumer-owned cookie/session wiring in Access
+- [x] Contract test against the real Identity provider and first consumer
+- [x] Optional managed metadata refresh loop and freshness status in the framework
+- [ ] Access alert wiring and live key-rotation/outage acceptance
 
 ## Future candidate — optional AI integration
 
@@ -52,3 +54,25 @@ embeddings, and fallback routing are out of scope until a consumer needs them.
 Any implementation must bound time, request/response size, and spending; keep
 API keys out of logs; and make external data transfer opt-in. Do not build this
 module before a concrete consumer validates the interface (Architecture 5.6).
+
+## Future milestone — self-hosted observability (Homelab and SMB)
+
+Keep three concerns separate: Prometheus-compatible metrics for rates, latency,
+errors, and service health; structured JSON logs collected centrally (candidate:
+Grafana Alloy/journald -> Loki) for investigating individual failures; and
+durable security audit events in PostgreSQL. Grafana should present these
+together in useful dashboards for both Homelab operators and small businesses.
+InfluxDB remains an optional additional
+source for sensor, energy, or other existing time-series data; it is not the
+default store for detailed application logs.
+
+The framework already provides JSON logging and opt-in HTTP request metrics.
+Still open: a protected metrics endpoint in consuming applications, consistent
+log fields and per-component levels, additional health/DB/auth metrics, a
+collector/deployment example, retention and access rules, and a starter Grafana
+dashboard. Start with a low-maintenance single-node setup; document a path to
+multiple services and sites, role-based dashboard access, backups, configurable
+retention, and alerting for SMB use without making those requirements mandatory
+for Homelabs. Keep tokens, passwords, PINs, raw OIDC URLs, and other secrets out
+of logs; avoid user IDs, request IDs, and raw paths as metric labels. Add these
+incrementally as Identity and Access integrations provide real use cases.
