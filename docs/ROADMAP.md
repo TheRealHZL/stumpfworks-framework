@@ -40,6 +40,7 @@ real consumers validate the design.
 - [x] Consumer-owned cookie/session wiring in Access
 - [x] Contract test against the real Identity provider and first consumer
 - [x] Optional managed metadata refresh loop and freshness status in the framework
+- [x] Access refresh-loop wiring and result logging
 - [ ] Access alert wiring and live key-rotation/outage acceptance
 
 ## Future candidate — optional AI integration

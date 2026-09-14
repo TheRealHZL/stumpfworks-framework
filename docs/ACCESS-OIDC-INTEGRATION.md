@@ -3,7 +3,8 @@
 Status: Access reports the framework-backed consumer deployed and a successful
 real browser login on 2026-09-14. This document retains the original design and
 acceptance checklist; see `STATUS.md` for the current summary. Key rotation,
-issuer-outage acceptance, and monitored refresh remain open.
+issuer-outage acceptance, and a dedicated refresh alert remain open. Access now
+runs the framework refresh loop and logs each result.
 
 ## Existing consumer boundary
 

@@ -69,9 +69,11 @@ public status document.
 The framework's local cache test now also covers overlapping old/new JWKS keys
 before removal of the old key. This is not evidence of a live provider rotation.
 The cache exposes freshness timestamps and state for consumer monitoring, but
-Access has not yet wired those values to an alert or scheduled refresh. An
-optional managed refresh loop is now available in the framework and is covered
-by local outage/recovery tests; it is not yet evidence of Access integration.
+Access now runs the optional managed refresh loop every ten minutes and logs
+each result. The first refresh after its 2026-09-14 update succeeded; service
+readiness and both login methods remained available. A dedicated alert and a
+fresh interactive browser login after that binary update remain open. Local
+outage/recovery tests are not evidence of a live provider outage test.
 
 ## Before tagging alpha.1
 
