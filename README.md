@@ -5,8 +5,8 @@ independent StumpfWorks applications. The project is at an early `0.x` stage;
 its public APIs may still change as Identity and Access validate them.
 
 The Go module path is `github.com/TheRealHZL/stumpfworks-framework`. The
-repository is private; downstream builds need GitHub access and should set
-`GOPRIVATE=github.com/TheRealHZL/stumpfworks-framework` in their environment.
+repository is public; downstream builds do not need `GOPRIVATE` for this
+module.
 
 ## Quick start
 

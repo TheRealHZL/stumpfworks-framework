@@ -5,6 +5,8 @@ follows Semantic Versioning; APIs may change during `0.x` development.
 
 ## [Unreleased]
 
+## [0.1.0-alpha.1] - 2026-09-14
+
 ### Added
 
 - Application lifecycle with bounded HTTP shutdown and owned resources.
@@ -17,6 +19,11 @@ follows Semantic Versioning; APIs may change during `0.x` development.
 - TLS-by-default PostgreSQL pooling and forward-only transactional migrations.
 - Immutable audit-event envelope, PostgreSQL schema, and append-only store API.
 - Unit, integration, race, build, vet, and vulnerability checks in CI.
+- Pinned-issuer OIDC Discovery/JWKS, offline RS256 ID-token validation,
+  Authorization Code with PKCE S256, browser-bound one-use transactions, and
+  encrypted transaction persistence for consumer-owned storage.
+- Bounded OIDC metadata cache, managed refresh loop, and freshness status.
+- Opt-in Prometheus-compatible HTTP request metrics.
 
 ### Security
 
