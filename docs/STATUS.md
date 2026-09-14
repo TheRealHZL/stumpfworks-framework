@@ -62,22 +62,30 @@ consumer is deployed and that a real browser login with an explicitly linked
 Identity account succeeded. Its PostgreSQL integration tests cover successful
 and negative flows; its deployment record describes a restricted backup and
 rollback procedure. These are Access-project results, not tests independently
-rerun by this framework repository. Key rotation and issuer-outage acceptance
-remain open. Do not put deployment hostnames, IP addresses, or secrets in this
-public status document.
+rerun by this framework repository. Live issuer-outage acceptance remains open.
+Do not put deployment hostnames, IP addresses, or secrets in this public status
+document.
 
-The framework's local cache test now also covers overlapping old/new JWKS keys
-before removal of the old key. This is not evidence of a live provider rotation.
-The cache exposes freshness timestamps and state for consumer monitoring, but
-Access now runs the optional managed refresh loop every ten minutes and logs
-each result. The first refresh after its 2026-09-14 update succeeded; service
-readiness and both login methods remained available. A dedicated alert and a
-fresh interactive browser login after that binary update remain open. Local
-outage/recovery tests are not evidence of a live provider outage test.
+The framework's local cache test covers overlapping old/new JWKS keys. Access
+also passed isolated issuer-outage/recovery and overlapping-key integration tests
+against a disposable PostgreSQL database. In a controlled live Identity rotation,
+the operator confirmed a fresh Access browser login after the new key became the
+only advertised key. The OIDC contract test, Identity and Access service checks,
+and Identity token-issuance audit passed. The consumer's refresh loop runs every
+ten minutes and logs each result. A dedicated alert and live issuer-outage
+acceptance remain open; the isolated outage test is not a live outage test. The
+production provider was not deliberately shut down.
+
+Access has prepared an optional ntfy notifier for refresh failure, stale-key
+escalation, and recovery, with local TLS tests. It is not deployed or connected
+to an operator topic yet; no production notification has been verified.
 
 ## Before tagging alpha.1
 
-- Confirm the Apache-2.0 license choice with the maintainer. The module path
-  now matches the GitHub repository (ADR 0009).
-- Add a permanent private vulnerability-reporting address.
-- Perform the documented quick start in a clean checkout.
+- [x] The maintainer confirmed Apache-2.0 on 2026-09-14. The module path
+  matches the GitHub repository (ADR 0009).
+- [x] Add a permanent private vulnerability-reporting address:
+  `hello@stumpfworks.de`.
+- [x] Perform the documented quick start in a clean local checkout. On
+  2026-09-14, `go test ./...` and the minimal-app build passed; both liveness
+  and readiness returned HTTP 200. No PostgreSQL service was required.

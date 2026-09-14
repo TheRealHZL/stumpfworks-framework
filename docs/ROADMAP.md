@@ -41,7 +41,9 @@ real consumers validate the design.
 - [x] Contract test against the real Identity provider and first consumer
 - [x] Optional managed metadata refresh loop and freshness status in the framework
 - [x] Access refresh-loop wiring and result logging
-- [ ] Access alert wiring and live key-rotation/outage acceptance
+- [x] Access isolated issuer-outage/recovery tests and live Identity key-rotation acceptance
+- [ ] Deploy and verify Access ntfy alert delivery (notifier prepared locally)
+- [ ] Live issuer-outage acceptance (no planned production shutdown)
 
 ## Future candidate — optional AI integration
 

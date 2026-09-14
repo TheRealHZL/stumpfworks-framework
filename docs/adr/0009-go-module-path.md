@@ -17,8 +17,8 @@ path. Package imports, examples, tests, and build metadata use that path.
 
 ## Consequences
 
-Consumers need GitHub access to this private repository. They should configure
-`GOPRIVATE=github.com/TheRealHZL/stumpfworks-framework` in their own build
-environment and use their normal credential helper; credentials do not belong
-in source, command examples, or CI logs. A future repository transfer would be
-a deliberate module-path migration, not an implicit rename.
+At the time of this decision the repository was private and consumers needed
+GitHub access with `GOPRIVATE`. The repository is now public, so that private
+module configuration is no longer required. The canonical module path remains
+`github.com/TheRealHZL/stumpfworks-framework`; a future transfer that breaks
+that path would require a deliberate module-path migration.
