@@ -41,14 +41,41 @@ The latest merges passed the full GitHub CI workflow on both `main` and
 `develop`, including race tests, PostgreSQL integration, build, vet, and the
 vulnerability scan.
 
-This is a client library, not a complete application login. A consumer still
-needs to wire the browser cookie and callback to its own session/account-link
-store, schedule and monitor metadata refresh, and run a contract test against
-the real Identity provider. Identity itself was not changed by this work.
+This remains a client library, not a complete application login. Access now
+wires the browser cookie, callback, account link, and local session. Scheduled
+and monitored metadata refresh is still open. Identity itself was not changed
+by the framework implementation.
+
+## Live OIDC contract check on 2026-09-14
+
+- The opt-in `test/contract` check passed against the deployed Identity issuer
+  using normal TLS verification. It
+  covered Discovery, JWKS, and framework PKCE S256 login initialization; no
+  client secret, user login, code exchange, or application session was used.
+- This framework-side check made no production changes. It was only the first
+  stage of the consumer acceptance test.
+
+## Access consumer status on 2026-09-14
+
+The Access project's validation record reports that its framework-backed OIDC
+consumer is deployed and that a real browser login with an explicitly linked
+Identity account succeeded. Its PostgreSQL integration tests cover successful
+and negative flows; its deployment record describes a restricted backup and
+rollback procedure. These are Access-project results, not tests independently
+rerun by this framework repository. Key rotation and issuer-outage acceptance
+remain open. Do not put deployment hostnames, IP addresses, or secrets in this
+public status document.
+
+The framework's local cache test now also covers overlapping old/new JWKS keys
+before removal of the old key. This is not evidence of a live provider rotation.
+The cache exposes freshness timestamps and state for consumer monitoring, but
+Access has not yet wired those values to an alert or scheduled refresh. An
+optional managed refresh loop is now available in the framework and is covered
+by local outage/recovery tests; it is not yet evidence of Access integration.
 
 ## Before tagging alpha.1
 
 - Confirm the Apache-2.0 license choice with the maintainer. The module path
-  now matches the private GitHub repository (ADR 0009).
+  now matches the GitHub repository (ADR 0009).
 - Add a permanent private vulnerability-reporting address.
 - Perform the documented quick start in a clean checkout.
